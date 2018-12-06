@@ -121,7 +121,7 @@ public class HuffProcessor {
 		while(bit != -1) {
 			String code = codings[bit];
 			out.writeBits(code.length(), Integer.parseInt(code,2));
-			bit = in.readBits(BITS_PER_WORD+1);
+			bit = in.readBits(BITS_PER_WORD);
 		}
 		String last = codings[PSEUDO_EOF];
 		out.writeBits(last.length(), Integer.parseInt(last,2));
