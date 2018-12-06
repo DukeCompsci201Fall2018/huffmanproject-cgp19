@@ -61,7 +61,7 @@ public class HuffProcessor {
 		int bit = in.readBits(1);
 		while(bit != -1) {
 			freq[bit] += 1;	
-			bit = in.readBits(1);
+			bit = in.readBits(BITS_PER_WORD);
 		}
 		return freq;
 	}
