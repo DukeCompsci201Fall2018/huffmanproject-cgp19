@@ -58,10 +58,10 @@ public class HuffProcessor {
 	public int[] readForCounts(BitInputStream in) {
 		int[] freq = new int[ALPH_SIZE + 1];
 		freq[PSEUDO_EOF] = 1;
-		int bit = in.readBits(1);
-		while(bit != -1) {
+		while(true) {
+			int bit = in.readBits(BITS_PER_WORD);
+			if(bit == -1) break;
 			freq[bit] += 1;	
-			bit = in.readBits(BITS_PER_WORD);
 		}
 		return freq;
 	}
@@ -117,14 +117,19 @@ public class HuffProcessor {
 	}
 	
 	public void writeCompressedBits(String[] codings, BitOutputStream out, BitInputStream in) {
-		int bit = in.readBits(1);
-		while(bit != -1) {
-			String code = codings[bit];
-			out.writeBits(code.length(), Integer.parseInt(code,2));
-			bit = in.readBits(BITS_PER_WORD);
+		while(true) {
+			int bit = in.readBits(BITS_PER_WORD);
+			if(bit < 0 || bit > codings.length) {
+				String last = codings[PSEUDO_EOF];
+				out.writeBits(last.length(), Integer.parseInt(last,2));
+				break;
+			}
+			else {
+				String code = codings[bit];
+				out.writeBits(code.length(), Integer.parseInt(code,2));
+			}
 		}
-		String last = codings[PSEUDO_EOF];
-		out.writeBits(last.length(), Integer.parseInt(last,2));
+		
 	}
 	
 	/**
