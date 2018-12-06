@@ -51,7 +51,7 @@ public class HuffProcessor {
 		writeHeader(root,out);
 		
 		in.reset();
-		writeCompressedBits(codings,in,out);
+		writeCompressedBits(codings,out,in);
 		out.close();
 	}
 	
@@ -115,6 +115,15 @@ public class HuffProcessor {
 		}
 	}
 	
+	public void writeCompressedBits(String[] codings, BitOutputStream out, BitInputStream in) {
+		int bit = in.readBits(1);
+		while(bit != -1) {
+			String code = codings[bit];
+			out.writeBits(code.length(), Integer.parseInt(code,2));
+		}
+		String last = codings[PSEUDO_EOF];
+		out.writeBits(last.length(), Integer.parseInt(last,2));
+	}
 	
 	/**
 	 * Decompresses a file. Output file must be identical bit-by-bit to the
